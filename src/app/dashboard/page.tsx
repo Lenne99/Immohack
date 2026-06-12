@@ -1,19 +1,43 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useSettings } from "@/lib/settings-context";
 import { MOCK_PROPERTIES } from "@/data/mock-properties";
+import type { Property } from "@/data/mock-properties";
 import { DealCard } from "@/components/deals/DealCard";
+import { CrawlStatus } from "@/components/dashboard/CrawlStatus";
 import { formatCurrency, formatPercent } from "@/lib/utils";
 import { SlidersHorizontal, Settings, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
   const { settings, activeRegionFilter, regionLabel } = useSettings();
-  const [sortBy, setSortBy] = useState<"score" | "yield" | "cashflow" | "price">("score");
+  const [sortBy, setSortBy] = useState<"score" | "yield" | "cashflow" | "price" | "newest">("score");
+  const [allProperties, setAllProperties] = useState<Property[]>(MOCK_PROPERTIES);
+  const [newIds, setNewIds] = useState<Set<string>>(new Set());
+
+  const fetchProperties = useCallback(async () => {
+    try {
+      const res = await fetch("/api/properties?limit=100&sortBy=newest", { cache: "no-store" });
+      const data = await res.json();
+      if (data.properties?.length) {
+        setAllProperties(data.properties);
+        // Mark crawled (non-mock) IDs as new
+        const crawledIds = new Set<string>(
+          data.properties.filter((p: Property) => p.id.startsWith("crawled-")).map((p: Property) => p.id)
+        );
+        setNewIds(crawledIds);
+      }
+    } catch {}
+  }, []);
+
+  // Initial load + refresh on new deals
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
 
   const deals = useMemo(() => {
-    let list = MOCK_PROPERTIES.filter((p) => {
+    let list = allProperties.filter((p) => {
       if (p.analysis.dealScore < settings.minDealScore) return false;
       if (p.price > settings.budget) return false;
       if (p.analysis.grossYield < settings.zielrendite) return false;
@@ -25,8 +49,9 @@ export default function DashboardPage() {
     else if (sortBy === "yield") list.sort((a, b) => b.analysis.grossYield - a.analysis.grossYield);
     else if (sortBy === "cashflow") list.sort((a, b) => b.analysis.cashflow - a.analysis.cashflow);
     else if (sortBy === "price") list.sort((a, b) => a.price - b.price);
+    else if (sortBy === "newest") list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return list;
-  }, [settings.minDealScore, settings.budget, settings.zielrendite, activeRegionFilter, sortBy]);
+  }, [allProperties, settings.minDealScore, settings.budget, settings.zielrendite, activeRegionFilter, sortBy]);
 
   const avgYield = deals.length
     ? deals.reduce((s, p) => s + p.analysis.grossYield, 0) / deals.length
@@ -62,6 +87,11 @@ export default function DashboardPage() {
         </Link>
       </div>
 
+      {/* Crawl status bar */}
+      <div className="border-b border-gray-800/60 bg-gray-950/80 px-8 py-2.5">
+        <CrawlStatus onNewDeals={fetchProperties} />
+      </div>
+
       <div className="px-8 py-6 space-y-6">
         {/* Result summary */}
         <div className="flex items-center justify-between">
@@ -86,6 +116,7 @@ export default function DashboardPage() {
               className="bg-gray-900 border border-gray-800 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500"
             >
               <option value="score">Bester Score zuerst</option>
+              <option value="newest">Neueste zuerst</option>
               <option value="yield">Höchste Rendite</option>
               <option value="cashflow">Bester Cashflow</option>
               <option value="price">Günstigster Preis</option>
@@ -116,7 +147,14 @@ export default function DashboardPage() {
         {deals.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {deals.map((p) => (
-              <DealCard key={p.id} property={p} />
+              <div key={p.id} className="relative">
+                {newIds.has(p.id) && (
+                  <span className="absolute -top-2 -right-2 z-10 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    NEU
+                  </span>
+                )}
+                <DealCard property={p} />
+              </div>
             ))}
           </div>
         )}
