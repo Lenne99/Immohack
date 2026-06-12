@@ -59,9 +59,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Profile bar */}
-      <div className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center gap-6 flex-wrap">
+      <div className="border-b border-gray-800 bg-gray-950 px-4 sm:px-8 py-3 sm:py-4 flex items-center gap-3 sm:gap-6 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
             {settings.name.charAt(0)}
           </div>
           <div>
@@ -70,66 +70,68 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="h-6 w-px bg-gray-800" />
+        <div className="h-6 w-px bg-gray-800 hidden sm:block" />
 
-        <Chip label="Region" value={regionLabel} />
-        <Chip label="Budget" value={`≤ ${formatCurrency(settings.budget)}`} />
-        <Chip label="Ziel-Rendite" value={`≥ ${formatPercent(settings.zielrendite)}`} />
-        <Chip label="Min. Score" value={settings.minDealScore.toString()} />
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Chip label="Region" value={regionLabel} />
+          <Chip label="Budget" value={`≤ ${formatCurrency(settings.budget)}`} />
+          <Chip label="Rendite" value={`≥ ${formatPercent(settings.zielrendite)}`} />
+          <Chip label="Score" value={settings.minDealScore.toString()} />
+        </div>
 
         <Link
           href="/settings"
-          className="ml-auto flex items-center gap-1.5 text-xs text-gray-500 hover:text-white transition-colors"
+          className="ml-auto flex items-center gap-1.5 text-xs text-gray-500 hover:text-white transition-colors flex-shrink-0"
         >
-          <Settings className="w-3.5 h-3.5" /> Profil bearbeiten
+          <Settings className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Profil bearbeiten</span>
         </Link>
       </div>
 
       {/* Crawl status bar */}
-      <div className="border-b border-gray-800/60 bg-gray-950/80 px-8 py-2.5">
+      <div className="border-b border-gray-800/60 bg-gray-950/80 px-4 sm:px-8 py-2.5">
         <CrawlStatus onNewDeals={fetchProperties} />
       </div>
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-4 sm:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Result summary */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-white text-xl font-bold">
+            <h1 className="text-white text-lg sm:text-xl font-bold">
               {deals.length === 0
                 ? "Keine passenden Deals"
                 : `${deals.length} Deal${deals.length !== 1 ? "s" : ""} für dich`}
             </h1>
             {deals.length > 0 && (
-              <p className="text-gray-500 text-sm mt-0.5">
-                Ø {formatPercent(avgYield)} Rendite · Bester Score: {bestScore}
+              <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
+                Ø {formatPercent(avgYield)} Rendite · Score: {bestScore}
               </p>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-gray-500" />
+            <SlidersHorizontal className="w-4 h-4 text-gray-500 flex-shrink-0" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="bg-gray-900 border border-gray-800 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500"
+              className="bg-gray-900 border border-gray-800 text-gray-300 text-xs sm:text-sm rounded-lg px-2 sm:px-3 py-1.5 focus:outline-none focus:border-blue-500 max-w-[140px] sm:max-w-none"
             >
-              <option value="score">Bester Score zuerst</option>
-              <option value="newest">Neueste zuerst</option>
+              <option value="score">Bester Score</option>
+              <option value="newest">Neueste</option>
               <option value="yield">Höchste Rendite</option>
               <option value="cashflow">Bester Cashflow</option>
-              <option value="price">Günstigster Preis</option>
+              <option value="price">Günstigster</option>
             </select>
           </div>
         </div>
 
         {/* Empty state */}
         {deals.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center">
             <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-4 border border-gray-800">
               <SlidersHorizontal className="w-7 h-7 text-gray-600" />
             </div>
             <p className="text-gray-400 text-lg font-medium mb-2">Keine Deals gefunden</p>
-            <p className="text-gray-600 text-sm max-w-sm mb-6">
+            <p className="text-gray-600 text-sm max-w-sm mb-6 px-4">
               Deine aktuellen Kriterien sind sehr streng. Passe Budget, Ziel-Rendite oder Region an.
             </p>
             <Link
@@ -143,7 +145,7 @@ export default function DashboardPage() {
 
         {/* Deal grid */}
         {deals.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {deals.map((p) => (
               <div key={p.id} className="relative">
                 {newIds.has(p.id) && (
