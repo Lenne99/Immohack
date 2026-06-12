@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className="min-h-full bg-gray-950 text-gray-100">
         <SettingsProvider>
           <Sidebar />
-          <main className="ml-64 min-h-screen">
+          <main className="ml-56 min-h-screen">
             {children}
           </main>
         </SettingsProvider>

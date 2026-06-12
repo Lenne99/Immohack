@@ -1,180 +1,147 @@
-import { Header } from "@/components/layout/Header";
-import { MOCK_PROPERTIES, GROWTH_MARKETS } from "@/data/mock-properties";
-import { formatCurrency, formatPercent, cn } from "@/lib/utils";
-import { DealScoreBadge } from "@/components/deals/DealScore";
-import { DashboardCharts } from "@/components/charts/DashboardCharts";
-import { DashboardDeals } from "@/components/dashboard/DashboardDeals";
-import { TrendingUp, Building2, Zap, Target, ArrowUpRight, ArrowDownRight, MapPin } from "lucide-react";
+"use client";
+
+import { useMemo, useState } from "react";
+import { useSettings } from "@/lib/settings-context";
+import { MOCK_PROPERTIES } from "@/data/mock-properties";
+import { DealCard } from "@/components/deals/DealCard";
+import { formatCurrency, formatPercent } from "@/lib/utils";
+import { SlidersHorizontal, Settings, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
-  const avgScore = Math.round(MOCK_PROPERTIES.reduce((s, p) => s + p.analysis.dealScore, 0) / MOCK_PROPERTIES.length);
-  const topOpportunities = MOCK_PROPERTIES.filter((p) => p.analysis.dealScore >= 80).length;
-  const avgYield = MOCK_PROPERTIES.reduce((s, p) => s + p.analysis.grossYield, 0) / MOCK_PROPERTIES.length;
+  const { settings, activeRegionFilter, regionLabel } = useSettings();
+  const [sortBy, setSortBy] = useState<"score" | "yield" | "cashflow" | "price">("score");
 
-  const scoreDistribution = [
-    { label: "90-100", count: MOCK_PROPERTIES.filter((p) => p.analysis.dealScore >= 90).length, color: "bg-green-500" },
-    { label: "80-89", count: MOCK_PROPERTIES.filter((p) => p.analysis.dealScore >= 80 && p.analysis.dealScore < 90).length, color: "bg-emerald-500" },
-    { label: "70-79", count: MOCK_PROPERTIES.filter((p) => p.analysis.dealScore >= 70 && p.analysis.dealScore < 80).length, color: "bg-amber-500" },
-    { label: "60-69", count: MOCK_PROPERTIES.filter((p) => p.analysis.dealScore >= 60 && p.analysis.dealScore < 70).length, color: "bg-orange-500" },
-    { label: "<60", count: MOCK_PROPERTIES.filter((p) => p.analysis.dealScore < 60).length, color: "bg-red-500" },
-  ];
+  const deals = useMemo(() => {
+    let list = MOCK_PROPERTIES.filter((p) => {
+      if (p.analysis.dealScore < settings.minDealScore) return false;
+      if (p.price > settings.budget) return false;
+      if (p.analysis.grossYield < settings.zielrendite) return false;
+      if (activeRegionFilter.length > 0 && !activeRegionFilter.includes(p.city)) return false;
+      return true;
+    });
 
-  const kpis = [
-    {
-      title: "Analysierte Immobilien",
-      value: "5.247",
-      change: "+23 heute",
-      positive: true,
-      icon: Building2,
-      color: "text-blue-400",
-      bg: "bg-blue-400/10",
-    },
-    {
-      title: "Top Chancen (Score ≥80)",
-      value: topOpportunities.toString(),
-      change: "+3 neu",
-      positive: true,
-      icon: Target,
-      color: "text-green-400",
-      bg: "bg-green-400/10",
-    },
-    {
-      title: "Durchschnittlicher Score",
-      value: avgScore.toString(),
-      change: "+2.1 vs. letzte Woche",
-      positive: true,
-      icon: Zap,
-      color: "text-amber-400",
-      bg: "bg-amber-400/10",
-    },
-    {
-      title: "Ø Bruttorendite",
-      value: formatPercent(avgYield),
-      change: "-0.2% vs. letzten Monat",
-      positive: false,
-      icon: TrendingUp,
-      color: "text-purple-400",
-      bg: "bg-purple-400/10",
-    },
-  ];
+    if (sortBy === "score") list.sort((a, b) => b.analysis.dealScore - a.analysis.dealScore);
+    else if (sortBy === "yield") list.sort((a, b) => b.analysis.grossYield - a.analysis.grossYield);
+    else if (sortBy === "cashflow") list.sort((a, b) => b.analysis.cashflow - a.analysis.cashflow);
+    else if (sortBy === "price") list.sort((a, b) => a.price - b.price);
+    return list;
+  }, [settings.minDealScore, settings.budget, settings.zielrendite, activeRegionFilter, sortBy]);
+
+  const avgYield = deals.length
+    ? deals.reduce((s, p) => s + p.analysis.grossYield, 0) / deals.length
+    : 0;
+  const bestScore = deals.length ? Math.max(...deals.map((p) => p.analysis.dealScore)) : 0;
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header title="Dashboard" />
-      <div className="flex-1 p-6 space-y-6">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {kpis.map((kpi) => {
-            const Icon = kpi.icon;
-            return (
-              <div key={kpi.title} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-gray-400 text-sm">{kpi.title}</p>
-                  <div className={`w-10 h-10 ${kpi.bg} rounded-lg flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 ${kpi.color}`} />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold text-white mb-1">{kpi.value}</p>
-                <p className={`text-xs flex items-center gap-1 ${kpi.positive ? "text-green-400" : "text-red-400"}`}>
-                  {kpi.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                  {kpi.change}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Score Distribution */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h3 className="text-white font-semibold mb-4">Deal Score Verteilung</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              {scoreDistribution.map((item) => (
-                <div key={item.label}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-gray-400 text-sm">Score {item.label}</span>
-                    <span className="text-white text-sm font-medium">{item.count}</span>
-                  </div>
-                  <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full ${item.color} rounded-full transition-all`}
-                      style={{ width: `${(item.count / MOCK_PROPERTIES.length) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-2 gap-3 content-start">
-              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-                <p className="text-green-400 text-2xl font-bold">{topOpportunities}</p>
-                <p className="text-gray-500 text-xs mt-1">Top Chancen</p>
-              </div>
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
-                <p className="text-blue-400 text-2xl font-bold">{avgScore}</p>
-                <p className="text-gray-500 text-xs mt-1">Ø Score</p>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gray-950">
+      {/* Profile bar */}
+      <div className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center gap-6 flex-wrap">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+            {settings.name.charAt(0)}
+          </div>
+          <div>
+            <p className="text-white text-sm font-semibold leading-tight">{settings.name}</p>
+            <p className="text-gray-500 text-xs">{settings.plan}</p>
           </div>
         </div>
 
-        {/* Charts Row */}
-        <DashboardCharts properties={MOCK_PROPERTIES} />
+        <div className="h-6 w-px bg-gray-800" />
 
-        {/* Region-gefilterte Deals (Top + Starter) */}
-        <DashboardDeals />
+        <Chip label="Region" value={regionLabel} />
+        <Chip label="Budget" value={`≤ ${formatCurrency(settings.budget)}`} />
+        <Chip label="Ziel-Rendite" value={`≥ ${formatPercent(settings.zielrendite)}`} />
+        <Chip label="Min. Score" value={settings.minDealScore.toString()} />
 
-        {/* Wachstumsmärkte */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-gray-800">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-400" />
-              <h3 className="text-white font-semibold">Wachstumsmärkte</h3>
+        <Link
+          href="/settings"
+          className="ml-auto flex items-center gap-1.5 text-xs text-gray-500 hover:text-white transition-colors"
+        >
+          <Settings className="w-3.5 h-3.5" /> Profil bearbeiten
+        </Link>
+      </div>
+
+      <div className="px-8 py-6 space-y-6">
+        {/* Result summary */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-white text-xl font-bold">
+              {deals.length === 0
+                ? "Keine passenden Deals"
+                : `${deals.length} Deal${deals.length !== 1 ? "s" : ""} für dich`}
+            </h1>
+            {deals.length > 0 && (
+              <p className="text-gray-500 text-sm mt-0.5">
+                Ø {formatPercent(avgYield)} Rendite · Bester Score: {bestScore}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="w-4 h-4 text-gray-500" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="bg-gray-900 border border-gray-800 text-gray-300 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500"
+            >
+              <option value="score">Bester Score zuerst</option>
+              <option value="yield">Höchste Rendite</option>
+              <option value="cashflow">Bester Cashflow</option>
+              <option value="price">Günstigster Preis</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Empty state */}
+        {deals.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mb-4 border border-gray-800">
+              <SlidersHorizontal className="w-7 h-7 text-gray-600" />
             </div>
-            <Link href="/market" className="text-blue-400 text-sm hover:text-blue-300 transition-colors flex items-center gap-1">
-              Alle <ArrowUpRight className="w-4 h-4" />
+            <p className="text-gray-400 text-lg font-medium mb-2">Keine Deals gefunden</p>
+            <p className="text-gray-600 text-sm max-w-sm mb-6">
+              Deine aktuellen Kriterien sind sehr streng. Passe Budget, Ziel-Rendite oder Region an.
+            </p>
+            <Link
+              href="/settings"
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-xl transition-colors"
+            >
+              <Settings className="w-4 h-4" /> Kriterien anpassen
             </Link>
           </div>
-          <div className="divide-y divide-gray-800/50">
-            {GROWTH_MARKETS.slice(0, 4).map((m) => (
-              <div key={m.city} className="flex items-center gap-3 px-5 py-3">
-                <MapPin className="w-4 h-4 text-gray-600 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium">{m.city}</p>
-                  <p className="text-gray-500 text-xs line-clamp-1">{m.reason}</p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className={cn("text-sm font-bold", m.score >= 90 ? "text-green-400" : m.score >= 80 ? "text-blue-400" : "text-amber-400")}>{m.score}</p>
-                  <p className="text-gray-600 text-xs">Score</p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-green-400 text-xs font-medium">+{m.growth}%</p>
-                  <p className="text-gray-600 text-xs">Wachstum</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
 
-        {/* Recent Activity */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-          <h3 className="text-white font-semibold mb-4">Zuletzt analysiert</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {MOCK_PROPERTIES.slice(0, 4).map((property) => (
-              <Link key={property.id} href={`/deals/${property.id}`}>
-                <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:border-gray-600 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-500 text-xs">{property.portal}</span>
-                    <DealScoreBadge score={property.analysis.dealScore} />
-                  </div>
-                  <p className="text-white text-sm font-medium line-clamp-1 mb-1">{property.city}</p>
-                  <p className="text-gray-400 text-xs">{formatCurrency(property.price)}</p>
-                </div>
-              </Link>
+        {/* Deal grid */}
+        {deals.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {deals.map((p) => (
+              <DealCard key={p.id} property={p} />
             ))}
           </div>
-        </div>
+        )}
+
+        {/* Alle Deals link */}
+        {deals.length > 0 && (
+          <div className="pt-2 text-center">
+            <Link
+              href="/deals"
+              className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-white transition-colors"
+            >
+              Alle Deals ohne Filter anzeigen <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+function Chip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-gray-600 text-xs">{label}:</span>
+      <span className="text-gray-300 text-xs font-medium bg-gray-800 px-2 py-0.5 rounded-md">{value}</span>
     </div>
   );
 }

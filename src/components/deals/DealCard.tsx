@@ -1,95 +1,72 @@
 import Link from "next/link";
-import { MapPin, Home } from "lucide-react";
+import { MapPin, TrendingUp, Banknote } from "lucide-react";
 import { cn, formatCurrency, formatPercent } from "@/lib/utils";
-import { DealScoreBadge } from "./DealScore";
 import type { Property } from "@/data/mock-properties";
+
+function ScoreBadge({ score }: { score: number }) {
+  const color =
+    score >= 90 ? "text-green-400 bg-green-400/10 border-green-400/30" :
+    score >= 80 ? "text-blue-400 bg-blue-400/10 border-blue-400/30" :
+    "text-amber-400 bg-amber-400/10 border-amber-400/30";
+  return (
+    <span className={cn("text-2xl font-bold tabular-nums px-3 py-1 rounded-lg border", color)}>
+      {score}
+    </span>
+  );
+}
 
 export function DealCard({ property }: { property: Property }) {
   const { analysis } = property;
-  const cashflowPositive = analysis.cashflow >= 0;
-  const isTop = analysis.dealScore >= 91;
-  const isHot = analysis.dealScore >= 85;
+  const cf = analysis.cashflow;
 
   return (
-    <Link href={`/deals/${property.id}`}>
-      <div className={cn(
-        "bg-gray-900 border rounded-xl overflow-hidden transition-all group cursor-pointer hover:shadow-xl hover:shadow-black/40 hover:-translate-y-0.5",
-        isTop ? "border-green-500/40 hover:border-green-400/70" :
-        isHot ? "border-blue-500/30 hover:border-blue-400/60" :
-        "border-gray-800 hover:border-gray-700"
-      )}>
-        {/* Image area */}
-        <div className="h-36 bg-gradient-to-br from-gray-800 to-gray-900 relative flex items-center justify-center overflow-hidden">
-          <Home className="w-10 h-10 text-gray-700" />
+    <Link href={`/deals/${property.id}`} className="block group">
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-gray-700 hover:-translate-y-0.5 transition-all hover:shadow-xl hover:shadow-black/40">
+        {/* Top row: score + portal */}
+        <div className="flex items-start justify-between mb-4">
+          <ScoreBadge score={analysis.dealScore} />
+          <span className="text-gray-600 text-xs bg-gray-800 px-2 py-1 rounded-md">{property.portal}</span>
+        </div>
 
-          <div className="absolute top-3 left-3 flex items-center gap-1.5">
-            <DealScoreBadge score={analysis.dealScore} />
-            {isTop && <span className="text-sm">🔥</span>}
+        {/* Title + location */}
+        <h3 className="text-white font-semibold text-sm leading-snug mb-1 line-clamp-2 group-hover:text-blue-400 transition-colors">
+          {property.title}
+        </h3>
+        <div className="flex items-center gap-1 text-gray-500 text-xs mb-5">
+          <MapPin className="w-3 h-3 flex-shrink-0" />
+          <span>{property.city} · {property.area} m² · {property.rooms} Zi.</span>
+        </div>
+
+        {/* Key metrics */}
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <p className="text-gray-500 text-xs mb-0.5">Preis</p>
+            <p className="text-white font-bold text-sm tabular-nums">{formatCurrency(property.price)}</p>
           </div>
-
-          <div className="absolute top-3 right-3">
-            <span className="bg-gray-950/80 text-gray-400 text-xs px-2 py-0.5 rounded-md">
-              {property.portal}
-            </span>
-          </div>
-
-          {/* Highlight-Banner */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 to-transparent px-3 pt-4 pb-2">
-            <p className={cn(
-              "text-xs font-bold leading-snug",
-              isTop ? "text-green-400" : isHot ? "text-blue-400" : "text-amber-400"
+          <div>
+            <p className="text-gray-500 text-xs mb-0.5 flex items-center gap-1">
+              <TrendingUp className="w-3 h-3" /> Rendite
+            </p>
+            <p className={cn("font-bold text-sm tabular-nums",
+              analysis.grossYield >= 7 ? "text-green-400" :
+              analysis.grossYield >= 5 ? "text-blue-400" : "text-gray-300"
             )}>
-              ✦ {property.highlight}
+              {formatPercent(analysis.grossYield)}
+            </p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-xs mb-0.5 flex items-center gap-1">
+              <Banknote className="w-3 h-3" /> CF/Mo
+            </p>
+            <p className={cn("font-bold text-sm tabular-nums", cf >= 0 ? "text-green-400" : "text-red-400")}>
+              {cf >= 0 ? "+" : ""}{formatCurrency(cf)}
             </p>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4">
-          <h3 className="text-white font-medium text-sm line-clamp-1 mb-1.5 group-hover:text-blue-400 transition-colors">
-            {property.title}
-          </h3>
-
-          <div className="flex items-center gap-1.5 text-gray-500 text-xs mb-3">
-            <MapPin className="w-3 h-3 flex-shrink-0" />
-            <span className="truncate">{property.city} · {property.area} m² · {property.rooms} Zi. · BJ {property.yearBuilt}</span>
-          </div>
-
-          <div className="flex items-end justify-between mb-3">
-            <div>
-              <p className="text-xl font-bold text-white tabular-nums">{formatCurrency(property.price)}</p>
-              <p className="text-gray-500 text-xs">{formatCurrency(property.pricePerSqm)}/m²</p>
-            </div>
-            <div className="text-right">
-              <p className={cn(
-                "text-lg font-bold tabular-nums",
-                analysis.grossYield >= 7 ? "text-green-400" :
-                analysis.grossYield >= 5 ? "text-blue-400" : "text-gray-300"
-              )}>
-                {formatPercent(analysis.grossYield)}
-              </p>
-              <p className="text-gray-500 text-xs">Bruttorendite</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-1.5 pt-3 border-t border-gray-800">
-            <div className="text-center bg-gray-800/50 rounded-lg py-2">
-              <p className={cn("text-sm font-bold tabular-nums", cashflowPositive ? "text-green-400" : "text-red-400")}>
-                {formatCurrency(analysis.cashflow)}
-              </p>
-              <p className="text-gray-600 text-xs mt-0.5">CF/Mo</p>
-            </div>
-            <div className="text-center bg-gray-800/50 rounded-lg py-2">
-              <p className="text-sm font-bold text-gray-200 tabular-nums">{formatPercent(analysis.netYield)}</p>
-              <p className="text-gray-600 text-xs mt-0.5">Netto</p>
-            </div>
-            <div className="text-center bg-gray-800/50 rounded-lg py-2">
-              <p className={cn("text-sm font-bold tabular-nums", analysis.locationScore >= 75 ? "text-amber-400" : "text-gray-400")}>
-                {analysis.locationScore}
-              </p>
-              <p className="text-gray-600 text-xs mt-0.5">Lage</p>
-            </div>
-          </div>
+        {/* Bottom highlight */}
+        <div className="mt-4 pt-4 border-t border-gray-800/80">
+          <p className="text-xs text-gray-500 line-clamp-1">✦ {property.highlight}</p>
         </div>
       </div>
     </Link>
