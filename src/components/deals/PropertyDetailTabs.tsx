@@ -5,10 +5,12 @@ import { cn, formatCurrency, formatPercent } from "@/lib/utils";
 import type { Property } from "@/data/mock-properties";
 import { PrognosisChart } from "@/components/charts/PrognosisChart";
 import { PropertyCalculator } from "@/components/deals/PropertyCalculator";
+import { PropertyInspector } from "@/components/deals/PropertyInspector";
 import { CheckCircle, AlertTriangle, TrendingUp, MapPin, FileText, BarChart3 } from "lucide-react";
 
 const TABS = [
   { id: "overview", label: "Übersicht" },
+  { id: "inspector", label: "🔍 Objektanalyse" },
   { id: "calculator", label: "🧮 Kalkulator" },
   { id: "finance", label: "Finanzanalyse" },
   { id: "location", label: "Lageanalyse" },
@@ -18,6 +20,7 @@ const TABS = [
 
 export function PropertyDetailTabs({ property }: { property: Property }) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [inspectorSubTab, setInspectorSubTab] = useState<"sanierung" | "mietpotenzial" | "weg">("sanierung");
   const { analysis } = property;
 
   return (
@@ -41,6 +44,15 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
       </div>
 
       <div className="p-6">
+        {/* OBJEKTANALYSE */}
+        {activeTab === "inspector" && (
+          <PropertyInspector
+            property={property}
+            activeSubTab={inspectorSubTab}
+            onSubTabChange={setInspectorSubTab}
+          />
+        )}
+
         {/* KALKULATOR */}
         {activeTab === "calculator" && (
           <PropertyCalculator property={property} />
