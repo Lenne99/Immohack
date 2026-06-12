@@ -6,12 +6,18 @@ import type { Property } from "@/data/mock-properties";
 import { PrognosisChart } from "@/components/charts/PrognosisChart";
 import { PropertyCalculator } from "@/components/deals/PropertyCalculator";
 import { PropertyInspector } from "@/components/deals/PropertyInspector";
+import { StressTest } from "@/components/deals/StressTest";
+import { TaxAndExit } from "@/components/deals/TaxAndExit";
+import { MarketComparison } from "@/components/deals/MarketComparison";
 import { CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
 
 const TABS = [
   { id: "overview", label: "Übersicht" },
   { id: "inspector", label: "🔍 Analyse" },
   { id: "calculator", label: "🧮 Rechner" },
+  { id: "stress", label: "⚡ Stresstest" },
+  { id: "tax", label: "🧾 Steuer & Exit" },
+  { id: "compare", label: "📊 Vergleich" },
   { id: "finance", label: "Finanzen" },
   { id: "location", label: "Lage" },
   { id: "prognosis", label: "Prognose" },
@@ -56,6 +62,21 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
         {/* KALKULATOR */}
         {activeTab === "calculator" && (
           <PropertyCalculator property={property} />
+        )}
+
+        {/* STRESSTEST */}
+        {activeTab === "stress" && (
+          <StressTest property={property} />
+        )}
+
+        {/* STEUER & EXIT */}
+        {activeTab === "tax" && (
+          <TaxAndExit property={property} />
+        )}
+
+        {/* MARKTVERGLEICH */}
+        {activeTab === "compare" && (
+          <MarketComparison property={property} />
         )}
 
         {/* ÜBERSICHT */}
