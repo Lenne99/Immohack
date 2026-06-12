@@ -1,99 +1,93 @@
 import Link from "next/link";
-import { MapPin, Home, Calendar, Zap, TrendingUp, TrendingDown } from "lucide-react";
-import { cn, formatCurrency, formatPercent, getPriceAssessmentColor, getPriceAssessmentLabel } from "@/lib/utils";
+import { MapPin, Home } from "lucide-react";
+import { cn, formatCurrency, formatPercent } from "@/lib/utils";
 import { DealScoreBadge } from "./DealScore";
 import type { Property } from "@/data/mock-properties";
 
-interface DealCardProps {
-  property: Property;
-}
-
-export function DealCard({ property }: DealCardProps) {
+export function DealCard({ property }: { property: Property }) {
   const { analysis } = property;
   const cashflowPositive = analysis.cashflow >= 0;
+  const isTop = analysis.dealScore >= 91;
+  const isHot = analysis.dealScore >= 85;
 
   return (
     <Link href={`/deals/${property.id}`}>
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 hover:shadow-xl hover:shadow-black/30 transition-all group cursor-pointer">
-        {/* Image Placeholder */}
-        <div className="h-40 bg-gradient-to-br from-gray-800 to-gray-900 relative flex items-center justify-center">
-          <Home className="w-12 h-12 text-gray-700" />
-          <div className="absolute top-3 left-3">
+      <div className={cn(
+        "bg-gray-900 border rounded-xl overflow-hidden transition-all group cursor-pointer hover:shadow-xl hover:shadow-black/40 hover:-translate-y-0.5",
+        isTop ? "border-green-500/40 hover:border-green-400/70" :
+        isHot ? "border-blue-500/30 hover:border-blue-400/60" :
+        "border-gray-800 hover:border-gray-700"
+      )}>
+        {/* Image area */}
+        <div className="h-36 bg-gradient-to-br from-gray-800 to-gray-900 relative flex items-center justify-center overflow-hidden">
+          <Home className="w-10 h-10 text-gray-700" />
+
+          <div className="absolute top-3 left-3 flex items-center gap-1.5">
             <DealScoreBadge score={analysis.dealScore} />
+            {isTop && <span className="text-sm">🔥</span>}
           </div>
+
           <div className="absolute top-3 right-3">
-            <span className="bg-gray-950/80 backdrop-blur text-gray-300 text-xs px-2 py-1 rounded-md">
+            <span className="bg-gray-950/80 text-gray-400 text-xs px-2 py-0.5 rounded-md">
               {property.portal}
             </span>
           </div>
-          <div className="absolute bottom-3 left-3">
-            <span
-              className={cn(
-                "text-xs font-medium px-2 py-1 rounded-md",
-                getPriceAssessmentColor(analysis.priceAssessment),
-                "bg-gray-950/80 backdrop-blur"
-              )}
-            >
-              {getPriceAssessmentLabel(analysis.priceAssessment)}
-            </span>
+
+          {/* Highlight-Banner */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 to-transparent px-3 pt-4 pb-2">
+            <p className={cn(
+              "text-xs font-bold leading-snug",
+              isTop ? "text-green-400" : isHot ? "text-blue-400" : "text-amber-400"
+            )}>
+              ✦ {property.highlight}
+            </p>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-4">
-          <h3 className="text-white font-medium text-sm line-clamp-2 mb-2 group-hover:text-blue-400 transition-colors">
+          <h3 className="text-white font-medium text-sm line-clamp-1 mb-1.5 group-hover:text-blue-400 transition-colors">
             {property.title}
           </h3>
 
           <div className="flex items-center gap-1.5 text-gray-500 text-xs mb-3">
-            <MapPin className="w-3 h-3" />
-            <span>{property.address}, {property.city}</span>
+            <MapPin className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">{property.city} · {property.area} m² · {property.rooms} Zi. · BJ {property.yearBuilt}</span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-            <span className="flex items-center gap-1">
-              <Home className="w-3 h-3" />
-              {property.rooms} Zi.
-            </span>
-            <span>{property.area} m²</span>
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
-              {property.yearBuilt}
-            </span>
-            <span className="ml-auto font-medium text-gray-400">{property.energyClass}</span>
-          </div>
-
-          {/* Price */}
           <div className="flex items-end justify-between mb-3">
             <div>
-              <p className="text-xl font-bold text-white">{formatCurrency(property.price)}</p>
+              <p className="text-xl font-bold text-white tabular-nums">{formatCurrency(property.price)}</p>
               <p className="text-gray-500 text-xs">{formatCurrency(property.pricePerSqm)}/m²</p>
             </div>
             <div className="text-right">
-              <p className="text-sm font-semibold text-blue-400">{formatPercent(analysis.grossYield)}</p>
-              <p className="text-gray-500 text-xs">Brutto-Rendite</p>
+              <p className={cn(
+                "text-lg font-bold tabular-nums",
+                analysis.grossYield >= 7 ? "text-green-400" :
+                analysis.grossYield >= 5 ? "text-blue-400" : "text-gray-300"
+              )}>
+                {formatPercent(analysis.grossYield)}
+              </p>
+              <p className="text-gray-500 text-xs">Bruttorendite</p>
             </div>
           </div>
 
-          {/* Key Metrics */}
-          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-gray-800">
-            <div className="text-center">
-              <p className={cn("text-sm font-semibold flex items-center justify-center gap-0.5", cashflowPositive ? "text-green-400" : "text-red-400")}>
-                {cashflowPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+          <div className="grid grid-cols-3 gap-1.5 pt-3 border-t border-gray-800">
+            <div className="text-center bg-gray-800/50 rounded-lg py-2">
+              <p className={cn("text-sm font-bold tabular-nums", cashflowPositive ? "text-green-400" : "text-red-400")}>
                 {formatCurrency(analysis.cashflow)}
               </p>
-              <p className="text-gray-600 text-xs mt-0.5">Cashflow/Mo</p>
+              <p className="text-gray-600 text-xs mt-0.5">CF/Mo</p>
             </div>
-            <div className="text-center">
-              <p className="text-sm font-semibold text-gray-300">{formatPercent(analysis.netYield)}</p>
+            <div className="text-center bg-gray-800/50 rounded-lg py-2">
+              <p className="text-sm font-bold text-gray-200 tabular-nums">{formatPercent(analysis.netYield)}</p>
               <p className="text-gray-600 text-xs mt-0.5">Netto</p>
             </div>
-            <div className="text-center">
-              <p className="text-sm font-semibold text-gray-300">
-                <Zap className="w-3 h-3 inline mr-0.5 text-amber-400" />
+            <div className="text-center bg-gray-800/50 rounded-lg py-2">
+              <p className={cn("text-sm font-bold tabular-nums", analysis.locationScore >= 75 ? "text-amber-400" : "text-gray-400")}>
                 {analysis.locationScore}
               </p>
-              <p className="text-gray-600 text-xs mt-0.5">Lage-Score</p>
+              <p className="text-gray-600 text-xs mt-0.5">Lage</p>
             </div>
           </div>
         </div>

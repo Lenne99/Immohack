@@ -9,9 +9,9 @@ import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 const CITIES = [...new Set(MOCK_PROPERTIES.map((p) => p.city))].sort();
 
 export default function DealsPage() {
-  const [minScore, setMinScore] = useState(0);
+  const [minScore, setMinScore] = useState(80);
   const [maxPrice, setMaxPrice] = useState(2000000);
-  const [minYield, setMinYield] = useState(0);
+  const [minYield, setMinYield] = useState(4.5);
   const [selectedCity, setSelectedCity] = useState("alle");
   const [sortBy, setSortBy] = useState("score");
   const [showFilters, setShowFilters] = useState(true);
@@ -98,7 +98,7 @@ export default function DealsPage() {
               </select>
             </div>
             <button
-              onClick={() => { setMinScore(0); setMaxPrice(2000000); setMinYield(0); setSelectedCity("alle"); }}
+              onClick={() => { setMinScore(80); setMaxPrice(2000000); setMinYield(4.5); setSelectedCity("alle"); }}
               className="w-full text-gray-400 text-sm hover:text-white transition-colors underline"
             >
               Filter zurücksetzen
@@ -108,6 +108,13 @@ export default function DealsPage() {
 
         {/* Main Content */}
         <div className="flex-1 p-6">
+          {/* Quality banner */}
+          <div className="flex items-center gap-2 bg-blue-600/10 border border-blue-600/20 rounded-xl px-4 py-2.5 mb-4 text-sm">
+            <span className="text-blue-400 font-semibold">Nur Top-Deals</span>
+            <span className="text-gray-500">·</span>
+            <span className="text-gray-400">Standardfilter: Score ≥ 80 · Rendite ≥ 4,5 %</span>
+            <button onClick={() => { setMinScore(0); setMaxPrice(2000000); setMinYield(0); setSelectedCity("alle"); }} className="ml-auto text-xs text-gray-500 hover:text-white underline transition-colors">Alle anzeigen</button>
+          </div>
           <div className="flex items-center gap-3 mb-5">
             <button
               onClick={() => setShowFilters(!showFilters)}
