@@ -89,7 +89,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Sehr schöne Altbauwohnung im gefragten Prenzlauer Berg. Hohe Decken, Stuck, saniertes Bad. Vermietet zu 1.100 € Kaltmiete. Ideales Investment.",
     monthlyRent: 1100,
     hausgeld: 320,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80","https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80","https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80"],
     highlight: "18% unter Marktpreis · Berlin Prenzlauer Berg",
     createdAt: "2024-01-15T10:00:00Z",
     analysis: {
@@ -142,7 +142,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Vollvermietetes Mehrfamilienhaus mit 4 Einheiten. Mieteinnahmen 3.800 €/Monat. Sanierungsbedarf vorhanden, eingepreist.",
     monthlyRent: 3800,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80","https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200&q=80"],
     highlight: "7,3% Rendite · Vollvermietet · Leipzig",
     createdAt: "2024-01-14T09:00:00Z",
     analysis: {
@@ -195,7 +195,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Sanierungsbedürftiges EFH in ruhiger Wohnlage. Großes Grundstück, Garage, Keller. Preislich attraktiv für Eigennutzer oder Investor.",
     monthlyRent: 1200,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200&q=80","https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80"],
     highlight: "22% unter Marktpreis · Sanierungspotenzial",
     createdAt: "2024-01-12T14:00:00Z",
     analysis: {
@@ -248,7 +248,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Gut vermietete Bestandswohnung mit stabilem Mieter seit 8 Jahren. Kaltmiete 900 €. Hausgeld 220 €. TG-Stellplatz im EG.",
     monthlyRent: 900,
     hausgeld: 220,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80","https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80"],
     highlight: "Hamburg · Stabiler Dauermieter · 8 Jahre",
     createdAt: "2024-01-11T08:00:00Z",
     analysis: {
@@ -301,7 +301,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Vollvermietetes MFH mit 5 Einheiten. Monatliche Mieteinnahmen 2.650 €. Teilsaniert. Guter Zustand.",
     monthlyRent: 2650,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80","https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200&q=80"],
     highlight: "9,9% Bruttorendite · Vollvermietet",
     createdAt: "2024-01-09T10:00:00Z",
     analysis: {
@@ -354,7 +354,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Vollständig kernsanierte Altbauwohnung. Neue Elektrik, neue Leitungen, Bäder, Küche. Erstbezug nach Sanierung.",
     monthlyRent: 1420,
     hausgeld: 280,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80","https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80","https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80"],
     highlight: "12% Rendite · 724€ Cashflow/Mo",
     createdAt: "2024-01-08T12:00:00Z",
     analysis: {
@@ -407,7 +407,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Paketverkauf: 3 Wohnungen (2x 2-ZKB, 1x 3-ZKB) im selben Objekt. Alle vermietet. Gesamtmiete 1.850 €/Monat.",
     monthlyRent: 1850,
     hausgeld: 420,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80","https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80"],
     highlight: "Kernsaniert · Null Sanierungsrisiko · Köln",
     createdAt: "2024-01-07T09:00:00Z",
     analysis: {
@@ -460,7 +460,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Gemischt genutztes Objekt: EG Gewerbe (vermietet an Physiotherapiepraxis), OG 3-ZKB Wohnung. Stabile Mieteinnahmen.",
     monthlyRent: 3200,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80","https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=1200&q=80"],
     highlight: "Gewerbe + Wohnen · Stuttgart · 5,1% Rendite",
     createdAt: "2024-01-06T11:00:00Z",
     analysis: {
@@ -513,7 +513,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Moderne 1-Zimmer Wohnung, ideal für Kapitalanlage. Nähe TU Dresden. Dauervermietet an Studenten. Inkl. Stellplatz.",
     monthlyRent: 620,
     hausgeld: 145,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80","https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80"],
     highlight: "Studentenvermietung · TU-Nähe · Dresden",
     createdAt: "2024-01-04T10:00:00Z",
     analysis: {
@@ -566,7 +566,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Günstiger Einstieg in Berlin. Solide Substanz, Sanierung Bad 2018. Vermietet zu 720 €. Sehr gute Rendite.",
     monthlyRent: 720,
     hausgeld: 185,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80","https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80"],
     highlight: "43% unter Marktpreis · Berlin · Sofort kaufen",
     createdAt: "2024-01-02T10:00:00Z",
     analysis: {
@@ -619,7 +619,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Sechsfamilienhaus, 5 vermietet, 1 leer. Monatl. Mieteinnahmen 3.200 €. Sanierungsbedarf Dach und Heizung.",
     monthlyRent: 3600,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1598228723793-52759bba239c?w=1200&q=80","https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80"],
     highlight: "9% Rendite · 788€ Cashflow/Mo · Erfurt MFH",
     createdAt: "2023-12-31T10:00:00Z",
     analysis: {
@@ -672,7 +672,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Bezugsfreie 2-Zimmer Wohnung in gepflegtem Zustand. Neue Küche 2021, Bad renoviert 2020. Balkon, Keller.",
     monthlyRent: 820,
     hausgeld: 195,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80","https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80"],
     highlight: "Nürnberg · Gepflegt · Bezugsfrei",
     createdAt: "2023-12-29T10:00:00Z",
     analysis: {
@@ -725,7 +725,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Historisches MFH im Kaßberg. 4 Einheiten, 3 vermietet. Mieteinnahmen 1.450 €. Umfangreiche Sanierung teils durchgeführt.",
     monthlyRent: 1450,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200&q=80","https://images.unsplash.com/photo-1598228723793-52759bba239c?w=1200&q=80"],
     highlight: "10,5% Rendite · 682€ Cashflow/Mo · Chemnitz",
     createdAt: "2023-12-28T10:00:00Z",
     analysis: {
@@ -778,7 +778,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Preiswerte 1-Zimmer Wohnung als Einstiegsobjekt. Vermietet zu 280 €/Monat. Hausgeld 95 €. Sofort positiver Cashflow.",
     monthlyRent: 280,
     hausgeld: 95,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80","https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80"],
     highlight: "Einstieg ab 39k · Sofort Cashflow positiv",
     createdAt: "2024-01-20T10:00:00Z",
     analysis: {
@@ -831,7 +831,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Renovierte 2-Zimmer Wohnung im trendigen Connewitz. Neues Bad, neue Böden. Vermietet zu 620 €. Wachstumsmarkt Leipzig.",
     monthlyRent: 620,
     hausgeld: 175,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80","https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80"],
     highlight: "Leipzig Connewitz · Wachstumsmarkt · 89 Score",
     createdAt: "2024-01-21T10:00:00Z",
     analysis: {
@@ -884,7 +884,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Vollständig vermietete 2-ZKB. Dauermieter seit 6 Jahren. Kaltmiete 440 €. Ideales Einstiegsobjekt.",
     monthlyRent: 440,
     hausgeld: 130,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80","https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80"],
     highlight: "10% Rendite · Dauermieter seit 6 Jahren",
     createdAt: "2024-01-22T10:00:00Z",
     analysis: {
@@ -937,7 +937,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Moderne 2-ZKB im angesagten Dresdner Neustadtviertel. Gut vermietet, stabile Mieter. Wachstumsmarkt.",
     monthlyRent: 720,
     hausgeld: 165,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80","https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80"],
     highlight: "16% unter Markt · Dresden Neustadt · Wachstum",
     createdAt: "2024-01-23T10:00:00Z",
     analysis: {
@@ -990,7 +990,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Dreifamilienhaus mit 3 vermieteten Einheiten. Gesamtmiete 920 €/Monat. Sanierungsbedarf vorhanden. Extrem günstiger Einstieg.",
     monthlyRent: 920,
     hausgeld: 0,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80","https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=1200&q=80"],
     highlight: "3 Einheiten unter 100k · 11% Rendite",
     createdAt: "2024-01-24T10:00:00Z",
     analysis: {
@@ -1043,7 +1043,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Gut erhaltene 2-Zimmer Wohnung in Uninähe. Dauerhaft hohe Nachfrage durch Studenten. Vermietet zu 580 €.",
     monthlyRent: 580,
     hausgeld: 145,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80","https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80"],
     highlight: "Erfurt · Uni-Nähe · Dauerhaft vermietet",
     createdAt: "2024-01-25T10:00:00Z",
     analysis: {
@@ -1096,7 +1096,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Kleines Einsteigerobjekt im aufwertenden Paulusviertel. Vermietet zu 310 €. Einfache Substanz, solider Zustand.",
     monthlyRent: 310,
     hausgeld: 110,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80","https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80"],
     highlight: "Halle · 7,7% Rendite · 48k Kaufpreis",
     createdAt: "2024-01-26T10:00:00Z",
     analysis: {
@@ -1149,7 +1149,7 @@ export const MOCK_PROPERTIES: Property[] = [
     description: "Kompakte 1-Zimmer Wohnung in der begehrten Potsdamer Innenstadt. Vermietet zu 650 €. Geringes Risiko.",
     monthlyRent: 650,
     hausgeld: 160,
-    images: [],
+    images: ["https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80","https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80"],
     highlight: "Potsdam · 18% unter Markt · Wachstumsmarkt",
     createdAt: "2024-01-27T10:00:00Z",
     analysis: {
@@ -1192,4 +1192,3 @@ export const GROWTH_MARKETS = [
   { city: "Cottbus", score: 76, growth: 0.4, avgYield: 9.2, trend: "aufkommend", reason: "Strukturwandel, neue Industrie, sehr günstige Preise" },
   { city: "Rostock", score: 79, growth: 0.6, avgYield: 4.8, trend: "steigend", reason: "Hafen, Universität, Tourismus, Ostsee-Effekt" },
 ];
-

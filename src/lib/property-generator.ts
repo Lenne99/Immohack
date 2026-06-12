@@ -1,7 +1,15 @@
 import type { Property } from "@/data/mock-properties";
 import { calculateDealScore } from "./scoring";
 
+// Realistic German real estate data pools
 const PORTALS = ["ImmobilienScout24", "Immowelt", "Immonet", "Kleinanzeigen"];
+
+const APT_IMAGES = [
+  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80",
+  "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80",
+  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80",
+  "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80",
+];
 
 const CITY_DATA: Record<string, { lat: number; lng: number; zip: string[]; pricePerSqm: [number, number]; rentPerSqm: [number, number] }> = {
   Leipzig:    { lat: 51.34, lng: 12.37, zip: ["04103", "04105", "04109", "04229", "04317"], pricePerSqm: [1800, 2800], rentPerSqm: [9, 13] },
@@ -59,6 +67,13 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function pickTwo<T>(arr: T[]): T[] {
+  const idx1 = Math.floor(Math.random() * arr.length);
+  let idx2 = Math.floor(Math.random() * (arr.length - 1));
+  if (idx2 >= idx1) idx2++;
+  return [arr[idx1], arr[idx2]];
+}
+
 let counter = 1000;
 
 export function generateProperty(): Property {
@@ -78,6 +93,7 @@ export function generateProperty(): Property {
   const monthlyRent = Math.round(rentPerSqm * area);
   const grossYield = (monthlyRent * 12) / price * 100;
 
+  // Only generate deals with decent yield (USP: nur gute Deals)
   if (grossYield < 5.5) return generateProperty();
 
   const hausgeld = rnd(150, 350);
@@ -113,6 +129,7 @@ export function generateProperty(): Property {
     avgCityPricePerSqm,
   });
 
+  // Only keep quality deals
   if (scoreResult.dealScore < 75) return generateProperty();
 
   const streets = STREET_POOLS[city] ?? ["Hauptstraße"];
@@ -125,6 +142,12 @@ export function generateProperty(): Property {
 
   const id = `crawled-${counter}`;
   const externalId = `${portal.toLowerCase().replace(/\s/g, "")}-${Date.now()}-${counter}`;
+
+  let portalUrl = "#";
+  if (portal === "ImmobilienScout24") portalUrl = `https://www.immobilienscout24.de/expose/${counter}`;
+  else if (portal === "Immowelt") portalUrl = `https://www.immowelt.de/expose/${counter}`;
+  else if (portal === "Immonet") portalUrl = `https://www.immonet.de/angebot/${counter}`;
+  else if (portal === "Kleinanzeigen") portalUrl = `https://www.kleinanzeigen.de/s-anzeige/${counter}`;
 
   return {
     id,
@@ -148,7 +171,7 @@ export function generateProperty(): Property {
     description: `Gut vermietete Eigentumswohnung in ${city}. ${rooms} Zimmer auf ${area} m². Baujahr ${yearBuilt}. Solide Rendite bei geringem Leerstandsrisiko.`,
     monthlyRent,
     hausgeld,
-    images: [],
+    images: pickTwo(APT_IMAGES),
     highlight: highlightFn(grossYield),
     createdAt: new Date().toISOString(),
     analysis: {

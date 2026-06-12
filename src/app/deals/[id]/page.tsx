@@ -4,10 +4,22 @@ import { MOCK_PROPERTIES } from "@/data/mock-properties";
 import { formatCurrency, formatPercent, getDealScoreBg, getPriceAssessmentColor, getPriceAssessmentLabel, cn } from "@/lib/utils";
 import { DealScore, DealScoreBadge } from "@/components/deals/DealScore";
 import { PropertyDetailTabs } from "@/components/deals/PropertyDetailTabs";
-import { MapPin, Home, Calendar, Zap, Heart, Share2, TrendingUp, TrendingDown, Building, AlertTriangle, CheckCircle } from "lucide-react";
+import { PropertyImageGallery } from "@/components/deals/PropertyImageGallery";
+import { MapPin, Home, Calendar, Heart, Share2, TrendingUp, TrendingDown, Building, AlertTriangle, CheckCircle, ExternalLink } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+function getPortalUrl(portal: string, externalId: string): string {
+  const numeric = externalId.replace(/[^0-9]/g, "").slice(0, 9) || "000000";
+  switch (portal) {
+    case "ImmobilienScout24": return `https://www.immobilienscout24.de/expose/${numeric}`;
+    case "Immowelt": return `https://www.immowelt.de/expose/${numeric}`;
+    case "Immonet": return `https://www.immonet.de/angebot/${numeric}`;
+    case "Kleinanzeigen": return `https://www.kleinanzeigen.de/s-anzeige/${numeric}`;
+    default: return "#";
+  }
 }
 
 export default async function PropertyDetailPage({ params }: PageProps) {
@@ -16,6 +28,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
   if (!property) notFound();
 
   const { analysis } = property;
+  const portalUrl = getPortalUrl(property.portal, property.externalId);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -23,21 +36,25 @@ export default async function PropertyDetailPage({ params }: PageProps) {
       <div className="p-6 max-w-7xl mx-auto w-full space-y-6">
         {/* Hero Section */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-          <div className="h-56 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 flex items-center justify-center relative">
-            <Building className="w-20 h-20 text-gray-700" />
-            <div className="absolute top-4 left-4 flex items-center gap-2">
+          <div className="relative">
+            <PropertyImageGallery images={property.images} title={property.title} />
+            {/* Badges over image */}
+            <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
               <DealScoreBadge score={analysis.dealScore} />
-              <span className="bg-gray-800/80 backdrop-blur text-gray-300 text-xs px-2 py-1 rounded-md">{property.portal}</span>
+              <span className="bg-gray-900/80 backdrop-blur text-gray-300 text-xs px-2 py-1 rounded-md border border-gray-700/50">
+                {property.portal}
+              </span>
             </div>
-            <div className="absolute top-4 right-4 flex gap-2">
-              <button className="bg-gray-800/80 backdrop-blur p-2 rounded-lg text-gray-400 hover:text-red-400 transition-colors">
+            <div className="absolute top-4 right-4 flex gap-2 z-10">
+              <button className="bg-gray-900/80 backdrop-blur p-2 rounded-lg text-gray-400 hover:text-red-400 transition-colors border border-gray-700/50">
                 <Heart className="w-4 h-4" />
               </button>
-              <button className="bg-gray-800/80 backdrop-blur p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
+              <button className="bg-gray-900/80 backdrop-blur p-2 rounded-lg text-gray-400 hover:text-white transition-colors border border-gray-700/50">
                 <Share2 className="w-4 h-4" />
               </button>
             </div>
           </div>
+
           <div className="p-6">
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
               <div className="flex-1">
@@ -63,12 +80,21 @@ export default async function PropertyDetailPage({ params }: PageProps) {
                   <span className="bg-gray-800 px-3 py-1.5 rounded-lg">{property.heatingType}</span>
                 </div>
               </div>
-              <div className="lg:text-right">
+              <div className="lg:text-right space-y-2">
                 <p className="text-3xl font-bold text-white">{formatCurrency(property.price)}</p>
                 <p className="text-gray-400 text-sm">{formatCurrency(property.pricePerSqm)}/m²</p>
-                <p className={cn("text-sm font-medium mt-1", getPriceAssessmentColor(analysis.priceAssessment))}>
+                <p className={cn("text-sm font-medium", getPriceAssessmentColor(analysis.priceAssessment))}>
                   {getPriceAssessmentLabel(analysis.priceAssessment)}
                 </p>
+                <a
+                  href={portalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 transition-colors mt-1"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Original-Inserat ({property.portal})
+                </a>
               </div>
             </div>
           </div>
