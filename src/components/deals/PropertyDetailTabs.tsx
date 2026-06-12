@@ -25,7 +25,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-      {/* Tab Navigation */}
       <div className="flex border-b border-gray-800 overflow-x-auto">
         {TABS.map((tab) => (
           <button
@@ -44,7 +43,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
       </div>
 
       <div className="p-6">
-        {/* OBJEKTANALYSE */}
         {activeTab === "inspector" && (
           <PropertyInspector
             property={property}
@@ -53,12 +51,10 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
           />
         )}
 
-        {/* KALKULATOR */}
         {activeTab === "calculator" && (
           <PropertyCalculator property={property} />
         )}
 
-        {/* ÜBERSICHT */}
         {activeTab === "overview" && (
           <div className="space-y-6">
             <div>
@@ -113,7 +109,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
           </div>
         )}
 
-        {/* FINANZANALYSE */}
         {activeTab === "finance" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -163,7 +158,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
                 </div>
               </div>
             </div>
-
             <div>
               <h3 className="text-white font-semibold mb-3">Renditekennzahlen</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -184,7 +178,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
           </div>
         )}
 
-        {/* LAGEANALYSE */}
         {activeTab === "location" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -224,19 +217,17 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
                 <div className="mt-4 bg-gray-800/50 rounded-lg p-4 text-center">
                   <p className="text-4xl font-bold text-amber-400">{analysis.locationScore}</p>
                   <p className="text-gray-400 text-sm mt-1">Gesamt-Lage-Score</p>
-                  <p className="text-gray-600 text-xs mt-0.5">von 100 Punkten</p>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* PROGNOSE */}
         {activeTab === "prognosis" && (
           <div className="space-y-6">
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
               <p className="text-amber-400 text-sm font-medium">Hinweis</p>
-              <p className="text-gray-400 text-sm mt-1">Die folgenden Prognosen sind Wahrscheinlichkeitsszenarien, keine Garantien. Sie basieren auf historischen Daten und Marktmodellen.</p>
+              <p className="text-gray-400 text-sm mt-1">Die folgenden Prognosen sind Wahrscheinlichkeitsszenarien, keine Garantien.</p>
             </div>
             <PrognosisChart prognosis={property.analysis.prognosis} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -265,7 +256,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
           </div>
         )}
 
-        {/* KI-BERICHT */}
         {activeTab === "report" && (
           <div className="space-y-6">
             <div className="flex items-center gap-2 mb-4">
@@ -277,11 +267,9 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
                 <p className="text-gray-500 text-xs">Generiert von Claude AI · Nur Analyse, keine Anlageberatung</p>
               </div>
             </div>
-
             <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
               <p className="text-gray-300 leading-relaxed">{analysis.aiReport}</p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-3">
@@ -310,7 +298,6 @@ export function PropertyDetailTabs({ property }: { property: Property }) {
                 </ul>
               </div>
             </div>
-
             <div className={cn("border rounded-xl p-5 flex items-center gap-4",
               analysis.dealScore >= 80 ? "bg-green-500/10 border-green-500/20" :
               analysis.dealScore >= 70 ? "bg-blue-500/10 border-blue-500/20" :
