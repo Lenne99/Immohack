@@ -14,17 +14,19 @@ import {
   Settings,
   Building2,
   Zap,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/deals", label: "Deal Liste", icon: Building2 },
-  { href: "/deal-finder", label: "Deal Finder", icon: Zap },
-  { href: "/market", label: "Marktübersicht", icon: BarChart3 },
-  { href: "/map", label: "Kartenansicht", icon: Map },
-  { href: "/favorites", label: "Favoriten", icon: Heart },
-  { href: "/reports", label: "Reports", icon: FileText },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, highlight: false },
+  { href: "/starter", label: "Einstieg ≤150k", icon: Rocket, highlight: true },
+  { href: "/deals", label: "Deal Liste", icon: Building2, highlight: false },
+  { href: "/deal-finder", label: "Deal Finder", icon: Zap, highlight: false },
+  { href: "/market", label: "Marktübersicht", icon: BarChart3, highlight: false },
+  { href: "/map", label: "Kartenansicht", icon: Map, highlight: false },
+  { href: "/favorites", label: "Favoriten", icon: Heart, highlight: false },
+  { href: "/reports", label: "Reports", icon: FileText, highlight: false },
 ];
 
 export function Sidebar() {
@@ -57,6 +59,8 @@ export function Sidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                 isActive
                   ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
+                  : item.highlight
+                  ? "text-green-400 hover:text-green-300 hover:bg-green-500/10 border border-green-500/20"
                   : "text-gray-400 hover:text-white hover:bg-gray-800"
               )}
             >

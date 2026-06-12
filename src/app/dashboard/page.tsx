@@ -1,9 +1,9 @@
 import { Header } from "@/components/layout/Header";
-import { MOCK_PROPERTIES } from "@/data/mock-properties";
-import { formatCurrency, formatPercent, getDealScoreBg, getDealScoreColor } from "@/lib/utils";
+import { MOCK_PROPERTIES, GROWTH_MARKETS } from "@/data/mock-properties";
+import { formatCurrency, formatPercent, getDealScoreBg, cn } from "@/lib/utils";
 import { DealScoreBadge } from "@/components/deals/DealScore";
 import { DashboardCharts } from "@/components/charts/DashboardCharts";
-import { TrendingUp, Building2, Zap, Target, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { TrendingUp, Building2, Zap, Target, ArrowUpRight, ArrowDownRight, Rocket, MapPin } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
@@ -173,6 +173,71 @@ export default function DashboardPage() {
 
         {/* Charts Row */}
         <DashboardCharts properties={MOCK_PROPERTIES} />
+
+        {/* Einstieg & Wachstumsmärkte */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Beste Starter-Deals */}
+          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-gray-800">
+              <div className="flex items-center gap-2">
+                <Rocket className="w-4 h-4 text-green-400" />
+                <h3 className="text-white font-semibold">Top Einstiegs-Deals ≤ 150k</h3>
+              </div>
+              <Link href="/starter" className="text-green-400 text-sm hover:text-green-300 transition-colors flex items-center gap-1">
+                Alle <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="divide-y divide-gray-800/50">
+              {[...MOCK_PROPERTIES].filter(p => p.price <= 150000).sort((a,b) => b.analysis.dealScore - a.analysis.dealScore).slice(0,4).map((p) => (
+                <Link key={p.id} href={`/deals/${p.id}`}>
+                  <div className="flex items-center gap-3 px-5 py-3 hover:bg-gray-800/30 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm font-medium line-clamp-1 hover:text-green-400 transition-colors">{p.title}</p>
+                      <p className="text-gray-500 text-xs">{p.city} · {formatCurrency(p.price)}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-green-400 text-sm font-semibold">{formatPercent(p.analysis.grossYield)}</p>
+                      <p className="text-gray-600 text-xs">Rendite</p>
+                    </div>
+                    <DealScoreBadge score={p.analysis.dealScore} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Wachstumsmärkte */}
+          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-gray-800">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-400" />
+                <h3 className="text-white font-semibold">Wachstumsmärkte</h3>
+              </div>
+              <Link href="/market" className="text-blue-400 text-sm hover:text-blue-300 transition-colors flex items-center gap-1">
+                Alle <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="divide-y divide-gray-800/50">
+              {GROWTH_MARKETS.slice(0,4).map((m) => (
+                <div key={m.city} className="flex items-center gap-3 px-5 py-3">
+                  <MapPin className="w-4 h-4 text-gray-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium">{m.city}</p>
+                    <p className="text-gray-500 text-xs line-clamp-1">{m.reason}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className={cn("text-sm font-bold", m.score >= 90 ? "text-green-400" : m.score >= 80 ? "text-blue-400" : "text-amber-400")}>{m.score}</p>
+                    <p className="text-gray-600 text-xs">Score</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-green-400 text-xs font-medium">+{m.growth}%</p>
+                    <p className="text-gray-600 text-xs">Wachstum</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Recent Activity */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
