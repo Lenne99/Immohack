@@ -9,6 +9,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Vercel Deploy Hook
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
         run: |
-          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_qSQEDHQ1KmbvYIrddajGQHzzVQuA/tzKtVG7aOH"
+          npm install -g vercel@latest
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: prj_qSQEDHQ1KmbvYIrddajGQHzzVQuA
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
