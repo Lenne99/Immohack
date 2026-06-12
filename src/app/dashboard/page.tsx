@@ -22,7 +22,6 @@ export default function DashboardPage() {
       const data = await res.json();
       if (data.properties?.length) {
         setAllProperties(data.properties);
-        // Mark crawled (non-mock) IDs as new
         const crawledIds = new Set<string>(
           data.properties.filter((p: Property) => p.id.startsWith("crawled-")).map((p: Property) => p.id)
         );
@@ -31,7 +30,6 @@ export default function DashboardPage() {
     } catch {}
   }, []);
 
-  // Initial load + refresh on new deals
   useEffect(() => {
     fetchProperties();
   }, [fetchProperties]);

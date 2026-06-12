@@ -10,7 +10,6 @@ export interface CrawlMeta {
   dealsFiltered: number;
 }
 
-// Module-level singleton — persists within a serverless instance lifetime
 let crawledProperties: Property[] = [];
 let lastCrawledAt: Date | null = null;
 let totalCrawlRuns = 0;
@@ -27,7 +26,6 @@ export function getStore() {
 }
 
 export function addCrawledProperties(props: Property[]) {
-  // Deduplicate by externalId
   const existingIds = new Set([
     ...MOCK_PROPERTIES.map((p) => p.externalId),
     ...crawledProperties.map((p) => p.externalId),

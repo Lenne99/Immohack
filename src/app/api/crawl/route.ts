@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import { addCrawledProperties, getCrawlMeta } from "@/lib/property-store";
 import { generateBatch } from "@/lib/property-generator";
 
-// Secret to protect the endpoint from unauthorized triggers
 const CRON_SECRET = process.env.CRON_SECRET ?? "immohack-cron-2024";
 
 export async function POST(request: Request) {
-  // Validate secret
   const auth = request.headers.get("authorization");
   if (auth !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,11 +13,9 @@ export async function POST(request: Request) {
   const portals = ["ImmobilienScout24", "Immowelt", "Immonet", "Kleinanzeigen"];
   const startTime = Date.now();
 
-  // Simulate crawling: generate 3-8 new candidate properties
   const candidateCount = Math.floor(Math.random() * 6) + 3;
   const candidates = generateBatch(candidateCount);
 
-  // Filter: only quality deals survive (score ≥ 75)
   const qualityDeals = candidates.filter((p) => p.analysis.dealScore >= 75);
   const added = addCrawledProperties(qualityDeals);
 
@@ -38,7 +34,6 @@ export async function POST(request: Request) {
   });
 }
 
-// Allow GET for manual testing in browser
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret");

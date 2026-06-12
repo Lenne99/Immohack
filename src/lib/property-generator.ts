@@ -1,7 +1,6 @@
 import type { Property } from "@/data/mock-properties";
 import { calculateDealScore } from "./scoring";
 
-// Realistic German real estate data pools
 const PORTALS = ["ImmobilienScout24", "Immowelt", "Immonet", "Kleinanzeigen"];
 
 const CITY_DATA: Record<string, { lat: number; lng: number; zip: string[]; pricePerSqm: [number, number]; rentPerSqm: [number, number] }> = {
@@ -79,7 +78,6 @@ export function generateProperty(): Property {
   const monthlyRent = Math.round(rentPerSqm * area);
   const grossYield = (monthlyRent * 12) / price * 100;
 
-  // Only generate deals with decent yield (USP: nur gute Deals)
   if (grossYield < 5.5) return generateProperty();
 
   const hausgeld = rnd(150, 350);
@@ -115,7 +113,6 @@ export function generateProperty(): Property {
     avgCityPricePerSqm,
   });
 
-  // Only keep quality deals
   if (scoreResult.dealScore < 75) return generateProperty();
 
   const streets = STREET_POOLS[city] ?? ["Hauptstraße"];

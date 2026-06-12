@@ -158,7 +158,6 @@ export default function SettingsPage() {
             Aktuell: <span className="text-white font-medium">{regionLabel}</span>
           </div>
 
-          {/* Fokus-Auswahl */}
           <div className="grid grid-cols-3 gap-3 mt-3">
             {[
               { value: "deutschland", label: "Ganz Deutschland", icon: Globe },
@@ -185,7 +184,6 @@ export default function SettingsPage() {
             })}
           </div>
 
-          {/* Bundesland-Auswahl */}
           {settings.investmentFokus === "bundesland" && (
             <div className="mt-4">
               <p className="text-gray-400 text-xs font-medium mb-3">Bundesland(/-länder) auswählen:</p>
@@ -213,7 +211,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Städte-Auswahl */}
           {settings.investmentFokus === "staedte" && (
             <div className="mt-4">
               <p className="text-gray-400 text-xs font-medium mb-3">Stadt(/-städte) auswählen:</p>

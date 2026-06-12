@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { RefreshCw, Wifi, WifiOff, Sparkles } from "lucide-react";
+import { RefreshCw, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatusData {
@@ -54,7 +54,6 @@ export function CrawlStatus({ onNewDeals }: CrawlStatusProps) {
     }
   }, [fetchStatus, onNewDeals]);
 
-  // Poll status every 30s; trigger crawl every 15min
   useEffect(() => {
     fetchStatus();
     const statusInterval = setInterval(() => fetchStatus(), 30_000);
@@ -67,7 +66,6 @@ export function CrawlStatus({ onNewDeals }: CrawlStatusProps) {
 
   return (
     <div className="flex items-center gap-3 flex-wrap">
-      {/* Live indicator */}
       <div className="flex items-center gap-2">
         <span className={cn(
           "w-2 h-2 rounded-full flex-shrink-0",
@@ -81,12 +79,10 @@ export function CrawlStatus({ onNewDeals }: CrawlStatusProps) {
 
       <span className="text-gray-800 text-xs">·</span>
 
-      {/* Last crawl time */}
       <span className="text-gray-500 text-xs">
         Zuletzt: <span className="text-gray-400">{status ? timeAgo(status.lastCrawledAt) : "–"}</span>
       </span>
 
-      {/* New deals badge */}
       {status && status.newSinceLastVisit > 0 && (
         <>
           <span className="text-gray-800 text-xs">·</span>
@@ -100,7 +96,6 @@ export function CrawlStatus({ onNewDeals }: CrawlStatusProps) {
         </>
       )}
 
-      {/* Manual scan button */}
       <button
         onClick={triggerCrawl}
         disabled={scanning}
