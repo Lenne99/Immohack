@@ -3,6 +3,7 @@
 import { cn, formatCurrency, formatPercent } from "@/lib/utils";
 import type { Property } from "@/data/mock-properties";
 import { MOCK_PROPERTIES } from "@/data/mock-properties";
+import { calcDSCR, EQUITY_RATIO, PURCHASE_COSTS_RATE } from "@/lib/investment-constants";
 
 interface Props {
   property: Property;
@@ -42,7 +43,7 @@ export function MarketComparison({ property }: Props) {
   const rentDeviation = ((rentPerSqm - benchmark.avgRentPerSqm) / benchmark.avgRentPerSqm) * 100;
 
   // ETF comparison
-  const investedCapital = price * 0.2 + price * 0.12;
+  const investedCapital = price * EQUITY_RATIO + price * PURCHASE_COSTS_RATE;
   const etfReturn7pct = investedCapital * Math.pow(1.07, 10) - investedCapital;
   const etfReturn5pct = investedCapital * Math.pow(1.05, 10) - investedCapital;
 
@@ -130,25 +131,13 @@ export function MarketComparison({ property }: Props) {
             },
             {
               label: "DSCR (Schuldendienstdeckung)",
-              value: (() => {
-                const loan = price * 0.8;
-                const monthlyDS = loan * (0.035 + 0.02) / 12;
-                const effectiveRent = monthlyRent * 0.97;
-                return (effectiveRent / monthlyDS).toFixed(2);
-              })(),
-              description: (() => {
-                const loan = price * 0.8;
-                const monthlyDS = loan * (0.035 + 0.02) / 12;
-                const dscr = (monthlyRent * 0.97) / monthlyDS;
-                return dscr >= 1.2 ? "Solide – Banken fordern typisch ≥ 1,2" :
-                       dscr >= 1.0 ? "Grenzwertig – knapp ausreichend für Finanzierung" :
-                       "Kritisch – Kreditwürdigkeit gefährdet";
-              })(),
-              good: (() => {
-                const loan = price * 0.8;
-                const monthlyDS = loan * (0.035 + 0.02) / 12;
-                return (monthlyRent * 0.97) / monthlyDS >= 1.2;
-              })(),
+              value: calcDSCR(price, monthlyRent).toFixed(2),
+              description: calcDSCR(price, monthlyRent) >= 1.2
+                ? "Solide – Banken fordern typisch ≥ 1,2"
+                : calcDSCR(price, monthlyRent) >= 1.0
+                ? "Grenzwertig – knapp ausreichend für Finanzierung"
+                : "Kritisch – Kreditwürdigkeit gefährdet",
+              good: calcDSCR(price, monthlyRent) >= 1.2,
             },
           ].map((item) => (
             <div key={item.label} className={cn("flex items-center gap-4 p-3 rounded-xl border",

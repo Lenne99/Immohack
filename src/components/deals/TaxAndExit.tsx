@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { cn, formatCurrency, formatPercent } from "@/lib/utils";
 import type { Property } from "@/data/mock-properties";
+import {
+  EQUITY_RATIO,
+  BASE_INTEREST_RATE,
+  REPAYMENT_RATE,
+  MANAGEMENT_RATE,
+  MAINTENANCE_RATE,
+  VACANCY_RATE,
+  BUILDING_VALUE_RATIO,
+  PURCHASE_COSTS_RATE,
+} from "@/lib/investment-constants";
 
 interface Props {
   property: Property;
@@ -18,23 +28,22 @@ export function TaxAndExit({ property }: Props) {
   const [selectedTaxRate, setSelectedTaxRate] = useState(35);
   const [holdYears, setHoldYears] = useState(10);
   const [rentGrowth, setRentGrowth] = useState(2);
-  const [priceGrowth, setpriceGrowth] = useState(2);
+  const [priceGrowth, setPriceGrowth] = useState(2);
 
   const { price, monthlyRent, hausgeld, yearBuilt, analysis } = property;
 
-  // AfA: 2% p.a. for post-1925, 2.5% for older
+  // AfA: 2,5% für Altbauten (vor 1925), sonst 2,0%
   const afaRate = yearBuilt < 1925 ? 2.5 : 2.0;
-  // Building value = 80% of purchase price (20% land)
-  const buildingValue = price * 0.8;
+  const buildingValue = price * BUILDING_VALUE_RATIO;
   const annualAfA = buildingValue * (afaRate / 100);
 
   const annualRent = monthlyRent * 12;
   const annualHausgeld = hausgeld * 12;
-  const loanAmount = price * 0.8;
-  const annualInterest = loanAmount * 0.035;
-  const annualManagement = monthlyRent * 0.08 * 12;
-  const annualMaintenance = price * 0.01;
-  const annualVacancy = monthlyRent * 0.03 * 12;
+  const loanAmount = price * (1 - EQUITY_RATIO);
+  const annualInterest = loanAmount * (BASE_INTEREST_RATE / 100);
+  const annualManagement = monthlyRent * MANAGEMENT_RATE * 12;
+  const annualMaintenance = price * MAINTENANCE_RATE;
+  const annualVacancy = monthlyRent * VACANCY_RATE * 12;
 
   // Deductible costs
   const totalDeductible = annualHausgeld + annualInterest + annualManagement + annualMaintenance + annualVacancy + annualAfA;
@@ -49,7 +58,7 @@ export function TaxAndExit({ property }: Props) {
   const afterTaxMonthlyCashflow = analysis.cashflow + monthlyTaxEffect;
 
   // 10-year projection
-  const annualRepayment = loanAmount * 0.02;
+  const annualRepayment = loanAmount * REPAYMENT_RATE;
   const rows = Array.from({ length: holdYears }, (_, i) => {
     const year = i + 1;
     const rentFactor = Math.pow(1 + rentGrowth / 100, i);
@@ -72,13 +81,12 @@ export function TaxAndExit({ property }: Props) {
 
   // Exit scenario
   const exitPrice = price * Math.pow(1 + priceGrowth / 100, holdYears);
-  const remainingDebt = loanAmount * Math.pow(1 - 0.02, holdYears);
-  const equity = price * 0.2; // initial equity
-  const exitProfit = exitPrice - remainingDebt - price; // simplified: selling price - remaining debt - initial price
-  // After 10 years: no Spekulationssteuer on private RE
+  const remainingDebt = loanAmount * Math.pow(1 - REPAYMENT_RATE, holdYears);
+  const exitProfit = exitPrice - remainingDebt - price;
   const exitProfitAfterTax = holdYears >= 10 ? exitProfit : exitProfit * (1 - taxRate);
   const totalReturn = totalAfterTaxCF + exitProfitAfterTax;
-  const roi = (totalReturn / (price * 0.2 + price * 0.12)) * 100; // on invested capital (EK + Nebenkosten)
+  const investedCapital = price * EQUITY_RATIO + price * PURCHASE_COSTS_RATE;
+  const roi = (totalReturn / investedCapital) * 100;
 
   return (
     <div className="space-y-6">
@@ -124,7 +132,7 @@ export function TaxAndExit({ property }: Props) {
           <label className="text-gray-500 text-xs block mb-1">Wertsteigerung p.a.</label>
           <select
             value={priceGrowth}
-            onChange={(e) => setpriceGrowth(Number(e.target.value))}
+            onChange={(e) => setPriceGrowth(Number(e.target.value))}
             className="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
           >
             {[0, 1, 2, 3, 4].map((r) => (
